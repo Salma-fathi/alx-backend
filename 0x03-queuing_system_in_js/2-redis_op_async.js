@@ -41,5 +41,3 @@ async function main() {
   await setNewSchool('HolbertonSanFrancisco', '100');
   await displaySchoolValue('HolbertonSanFrancisco');
 }
-
-main();
