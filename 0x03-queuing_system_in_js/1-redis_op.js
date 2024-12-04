@@ -1,6 +1,9 @@
 import { createClient, print } from 'redis';
 
-const client = createClient();
+const client = createClient({
+  host: '127.0.0.1',
+  port: 6379
+});
 
 client.on('connect', function() {
   console.log('Redis client connected to the server');
@@ -11,11 +14,17 @@ client.on('error', function (err) {
 });
 
 function setNewSchool(schoolName, value) {
-  client.set(schoolName, value, print);
-};
+  client.set(schoolName, value, (err, reply) => {
+    if (err) {
+      console.error('Error setting value:', err);
+    } else {
+      print(err, reply);
+    }
+  });
+}
 
 function displaySchoolValue(schoolName) {
-  client.get(schoolName, function(error, result) {
+  client.get(schoolName, (error, result) => {
     if (error) {
       console.log(error);
       throw error;
@@ -24,6 +33,9 @@ function displaySchoolValue(schoolName) {
   });
 }
 
-displaySchoolValue('Holberton');
-setNewSchool('HolbertonSanFrancisco', '100');
-displaySchoolValue('HolbertonSanFrancisco');
+// Connect the client
+client.connect().then(() => {
+  displaySchoolValue('Holberton');
+  setNewSchool('HolbertonSanFrancisco', '100');
+  displaySchoolValue('HolbertonSanFrancisco');
+}).catch(console.error);
