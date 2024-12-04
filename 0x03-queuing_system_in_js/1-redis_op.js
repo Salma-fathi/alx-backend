@@ -1,10 +1,11 @@
-import { createClient, print } from 'redis';
+import redis from 'redis';
 
-const client = createClient({
+const client = redis.createClient({
   host: '127.0.0.1',
   port: 6379
 });
 
+// For older versions of redis package
 client.on('connect', function() {
   console.log('Redis client connected to the server');
 });
@@ -18,7 +19,7 @@ function setNewSchool(schoolName, value) {
     if (err) {
       console.error('Error setting value:', err);
     } else {
-      print(err, reply);
+      console.log('Set operation reply:', reply);
     }
   });
 }
@@ -27,15 +28,13 @@ function displaySchoolValue(schoolName) {
   client.get(schoolName, (error, result) => {
     if (error) {
       console.log(error);
-      throw error;
+      return;
     }
     console.log(result);
   });
 }
 
-// Connect the client
-client.connect().then(() => {
-  displaySchoolValue('Holberton');
-  setNewSchool('HolbertonSanFrancisco', '100');
-  displaySchoolValue('HolbertonSanFrancisco');
-}).catch(console.error);
+// Remove .connect() for older versions
+displaySchoolValue('Holberton');
+setNewSchool('HolbertonSanFrancisco', '100');
+displaySchoolValue('HolbertonSanFrancisco');
